@@ -1,0 +1,12 @@
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_18TUR_20180812_clouds%3D24%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_31TCG_20171030_clouds%3D40%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_33TVF_20191104_clouds%3D84%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_58KFC_20181021_clouds%3D5%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_30TXR_20190618_clouds%3D35%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_32SNC_20181202_clouds%3D21%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_31PDM_20190911_clouds%3D79%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_21NYC_20171206_clouds%3D84%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_29RPP_20180206_clouds%3D44%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_49RFN_20190806_clouds%3D61%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_28PDU_20180609_clouds%3D16%25.tif
+https://20tree-public.s3-eu-west-1.amazonaws.com/candidates/cloudmask/cloud_mask_28PDU_20171002_clouds%3D70%25.tif
