@@ -1,5 +1,7 @@
 import rasterio
 import numpy as np
+import os
+from patchify import patchify
 import cv2
 
 
@@ -106,3 +108,71 @@ def plot_rgb(img, clip_percentile=(2, 98), clip_values=None, bands=[3, 2, 1], fi
         return figure
     else:
         ax.imshow(img)
+        
+        
+        
+def plot_dataset(img,mask,n):
+    """ Visualize a tile_RGB and the mask
+        Args: 
+            img: original image
+            mask: cloud mask
+            n: number of images for plotting
+    """
+    
+    for j in range(n):
+        plt.figure(figsize = (10, 8))
+        plt.subplot(j+1,2,1)
+        plt.imshow(np.transpose(img, (1,2,0)))
+        plt.title('Original Image')
+        plt.axis('off')
+
+        plt.subplot(j+1,2,2)
+        plt.imshow(np.transpose(np.repeat(mask, [3], axis=0),(1,2,0)))
+        plt.title('Original Mask')
+        plt.axis('off')
+        
+        
+        
+def prepare_patches(PATH, patch_size, bands, PATH_OUT = None, masks = False):
+    """ Cut large image into small patches 
+        Args: 
+        PATH: path to the images
+        patch_size: desired size to cut out the original image
+        bands: the bands/channels 
+        PATH_OUT: specify a path, if saving the small patches
+        masks: False by default
+        """
+    files = os.listdir(PATH)  #List of all image names in this subdirectory
+    all_img_patches = []
+    for i, image_name in enumerate(files):  
+        if image_name.endswith(".tif"): 
+            tile_id = image_name.split('_')[2]
+            date = image_name.split('_')[3]
+
+            ds = ensure_opened(PATH + image_name)  
+            image, meta = read_crop(ds, None, bands=bands)
+            N = image.shape[0] 
+            #Extract patches from each image
+            patches_img = patchify(image, (N, patch_size, patch_size), step=patch_size)  #Step=256 for 256 patches means no overlap
+            # remove extra dimension from patchify
+            patches_img = patches_img[0]
+
+            for i in range(patches_img.shape[0]):
+                for j in range(patches_img.shape[1]):
+
+                    single_patch_img = patches_img[i,j,:,:]
+                    #if masks is False:
+                        #single_patch_img = (single_patch_img - single_patch_img.mean()) /single_patch_img.std()
+                        #single_patch_img = (single_patch_img.astype('float32')) / 255.
+                        
+                        
+                    if PATH_OUT is not None:
+                        if not os.path.exists(PATH_OUT):
+                                os.makedirs(PATH_OUT)
+                        with rasterio.open(PATH_OUT + tile_id + '_'+ date +"_patch_" +str(i)+str(j), 'w', **meta) as dst:
+                            dst.write(image)
+                       
+                    all_img_patches.append(single_patch_img)
+
+    images = np.array(all_img_patches)
+    return(images)
