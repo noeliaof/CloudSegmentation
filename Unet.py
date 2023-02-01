@@ -1,6 +1,7 @@
 ## Unet 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class ConvBlock(nn.Module):
     def __init__(self, channel_in, channel_out, dilation=1):
@@ -34,11 +35,13 @@ class Upsample(nn.Module):
     def forward(self, x):
         return self.conv_transpose(x)
 
+
 class UNet(nn.Module):
     def __init__(self, clannels, classes):
         super(UNet, self).__init__()
         self.CHANNELS = clannels
         self.CLASSES = classes
+        
 
         self.inp = ConvBlock(self.CHANNELS, 64)
 
@@ -65,7 +68,10 @@ class UNet(nn.Module):
         self.out = nn.Conv2d(64, self.CLASSES, kernel_size=1)
 
     def forward(self, x):
-        a1 = self.inp(x)
+        
+        a0, pads = self.pad_to(x, 2**4)
+        
+        a1 = self.inp(a0)
         d1 = self.down1(a1)
 
         a2 = self.stage1(d1)
@@ -90,6 +96,35 @@ class UNet(nn.Module):
         u4 = self.up4(c3)
 
         c4 = self.stage1i(torch.cat([a1, u4], dim=1))
-        logits = self.out(c4)
+        # Get original size
+        c5 = self.unpad(c4, pads)
+        
+        logits = self.out(c5)
 
         return logits
+    
+    def pad_to(self, x, stride):
+        
+        h, w = x.shape[-2:]
+
+        if h % stride > 0:
+            new_h = h + stride - h % stride
+        else:
+            new_h = h
+        if w % stride > 0:
+            new_w = w + stride - w % stride
+        else:
+            new_w = w
+        lh, uh = int((new_h-h) / 2), int(new_h-h) - int((new_h-h) / 2)
+        lw, uw = int((new_w-w) / 2), int(new_w-w) - int((new_w-w) / 2)
+        pads = (lw, uw, lh, uh)
+        out = F.pad(x, pads, "constant", 0)
+
+        return out, pads
+    
+    def unpad(self, x, pad):
+        if pad[2]+pad[3] > 0:
+            x = x[:,:,pad[2]:-pad[3],:]
+        if pad[0]+pad[1] > 0:
+            x = x[:,:,:,pad[0]:-pad[1]]
+        return x
